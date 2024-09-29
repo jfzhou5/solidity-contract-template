@@ -12,7 +12,7 @@ import {
 
 // Prevent to load tasks before compilation and typechain
 if (!SKIP_LOAD) {
-  loadTasks(["deploy", "misc"]); // load task folders
+  loadTasks(["deploy"]); // load task folders
 }
 
 const accounts =
