@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
+import "hardhat-dependency-compiler";
 import { loadTasks } from "./helpers/utils";
 import { FORKING_ENABLED, MNEMONIC, MNEMONIC_PATH, PRIVATE_KEY, SKIP_LOAD } from "./helpers/env";
 
@@ -24,19 +25,22 @@ const config: HardhatUserConfig = {
     solidity: {
         compilers: [
             {
-                version: "0.8.24",
+                version: "0.8.28",
                 settings: {
                     optimizer: { enabled: true, runs: 100_000 },
                 },
             },
         ],
     },
+    dependencyCompiler: {
+        paths: ["@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol"],
+    },
     defaultNetwork: "testnet",
     networks: {
         hardhat: {
             forking: {
                 enabled: FORKING_ENABLED,
-                url: "https://rpc.ankr.com/eth",
+                url: "https://eth.api.onfinality.io/public",
             },
         },
         mainnet: {

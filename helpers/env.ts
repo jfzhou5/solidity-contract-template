@@ -1,17 +1,11 @@
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
+
 export const SKIP_LOAD = process.env.SKIP_LOAD === "true";
 
-export const DETERMINISTIC_DEPLOYMENT = process.env.DETERMINISTIC_DEPLOYMENT
-    ? process.env.DETERMINISTIC_DEPLOYMENT === "true"
-    : null;
-
-export const COMMON_DEPLOY_PARAMS = {
-    log: true,
-    deterministicDeployment: DETERMINISTIC_DEPLOYMENT ?? false,
-};
 export const MNEMONIC_PATH = "m/44'/60'/0'/0";
 export const MNEMONIC = process.env.MNEMONIC || "";
 export const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
+
 export const FORKING_ENABLED = process.env.FORKING_ENABLED
     ? process.env.FORKING_ENABLED?.toUpperCase() === "TRUE"
     : true;

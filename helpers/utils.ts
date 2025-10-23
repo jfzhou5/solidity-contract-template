@@ -1,13 +1,22 @@
 import fs from "fs";
 import path from "path";
 
-import { ContractTransactionResponse, ethers } from "ethers";
+import { ContractTransactionResponse, ethers, TransactionResponse } from "ethers";
 import { loadAllDeployments } from "hardhat-deploy/dist/src/utils";
 import { Export } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 declare var hre: HardhatRuntimeEnvironment;
+
+declare global {
+    interface Object {
+        toObject<T>(options?: {}): any;
+    }
+    interface Object {
+        toArray<T>(options?: {}): any;
+    }
+}
 
 export const loadTasks = (taskFolders: string[]): void =>
     taskFolders.forEach((folder) => {
@@ -19,13 +28,21 @@ export const loadTasks = (taskFolders: string[]): void =>
             });
     });
 
-export const waitForTx = async (tx: ContractTransactionResponse) => await tx.wait(1);
+export const waitForTx = async (tx: ContractTransactionResponse | TransactionResponse) => await tx.wait(1);
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const getDeployments = async (network: string): Promise<Export | undefined> => {
     const allDeployments = Object.values(loadAllDeployments(hre, hre.config.paths.deployments)).flat();
     return allDeployments.find((v) => v.name === network);
+};
+
+export const clearDeployments = (network: string) => {
+    // rm -rf deployments/network
+    const deploymentsPath = path.join(__dirname, "../deployments", network);
+    if (fs.existsSync(deploymentsPath)) {
+        fs.rmSync(deploymentsPath, { recursive: true });
+    }
 };
 
 export const getForkedETH = async (amount: string, to: string) => {
@@ -45,6 +62,7 @@ export const getTransparentUpgradeableProxyInfo = async (
     provider: ethers.Provider,
     proxy: string
 ): Promise<{
+    proxy: string;
     implementation: string;
     proxyAdmin: string;
     owner: string;
@@ -62,6 +80,7 @@ export const getTransparentUpgradeableProxyInfo = async (
         )
     ).slice(-40)}`;
     return {
+        proxy,
         implementation: currentImplAddress,
         proxyAdmin: proxyAdminAddress,
         owner,
